@@ -2622,7 +2622,11 @@ class NifExport(NifImportExport):
                                 "Cannot export mesh with unweighted vertices."
                                 " The unweighted vertices have been selected"
                                 " in the mesh so they can easily be"
-                                " identified.")
+                                 " identified.")
+
+                        # pre-reduce vertex weights to at most 4 per vertex
+                        # (prevents weight loss during partition creation)
+                        trishape._pre_reduce_vertex_weights(4)
 
                         # update bind position skinning data
                         trishape.update_bind_position()
@@ -3135,11 +3139,10 @@ class NifExport(NifImportExport):
                 interp.translation.x = node.translation.x
                 interp.translation.y = node.translation.y
                 interp.translation.z = node.translation.z
-                interp.rotation.x = node.rotation.x
-                interp.rotation.y = node.rotation.y
-                interp.rotation.z = node.rotation.z
-                interp.rotation.w = node.rotation.w
-                interp.scale = node.scale
+                # rotation: directly assign matrix components (old code preserved for working exports)
+                interp.rotation.x = node.rotation.m_11
+                interp.rotation.y = node.rotation.m_22
+                interp.rotation.z = node.rotation.m_33
 
             # bone rotations are stored in the IPO relative to the rest position
             # so we must take the rest position into account
