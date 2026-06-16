@@ -1,0 +1,31 @@
+Changelog -- NIF Scripts 2.5.9 Fixes
+=======================================
+
+Fixed
+-----
+- Matrix33 crash during Oblivion/FO3 export (export_nif.py)
+  Bones lacking IPO data caused: AttributeError: 'Matrix33' object has no attribute 'x'
+  Fixed by converting rotation matrix to quaternion via get_scale_quat().
+
+- Game crash from lost vertex weights in skin partition (export_nif.py + pyffi)
+  Vertices with >4 bone influences lost weight during update_skin_partition(),
+  producing invalid NiSkinPartition data that crashed Oblivion on load.
+  Fixed by adding _pre_reduce_vertex_weights(4) pass before partition creation.
+
+- Import seams and "glowing nostrils" from split normals (import_nif.py)
+  NIF files with split-per-face normals imported with hard-edge seams.
+  Added IMPORT_MERGE_VERTICES_BY_POSITION option to use position-only dedup
+  and recalculate smooth normals from faces.
+
+Changed
+-------
+- EXPORT_BONESPERPARTITION default raised 18 -> 32 (nif_common.py)
+- GUI slider max updated 18 -> 32
+- Oblivion/FO3 game defaults updated to match
+
+Files
+-----
+.\.blender\scripts\export\export_nif.py
+.\pyffi\formats\nif\__init__.py
+.\.blender\scripts\bpymodules\nif_common.py
+.\.blender\scripts\import\import_nif.py
